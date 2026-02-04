@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css'
+    integrity='sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=='
+    crossorigin='anonymous' referrerpolicy='no-referrer' />
+  <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' rel='stylesheet'
+    integrity='sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH' crossorigin='anonymous'>
+
+  <style>
+    body {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      .top {
+        height: calc(100% - 150px);
+        overflow-y: auto;
+      }
+
+      #prompt {
+        min-height: 150px;
+      }
+
+
+      think {
+
+        background-color: rgba(211, 211, 211, 0.61);
+        border-radius: 0.5rem;
+        padding: 0.25rem;
+        margin-bottom: 1rem;
+        max-height: 120px;
+        overflow-y: auto;
+
+        &::before {
+          content: 'Reasoning: ';
+          font-weight: bold;
+          font-size: 0.75rem;
+          display: inline-block;
+        }
+
+      }
+    }
+  </style>
+</head>
+
+<body data-bs-theme="light" class="bg-secondary-subtle">
+
+  <div class="top">
+    <h4 class="text-muted m-1 text-center">Ask me anything</h4>
+    <div id="messages" class="container mt-2 mb-5 d-flex flex-column align-items-baseline overflow-y-auto pb-5"
+      style="max-width: 800px;">
+    </div>
+  </div>
+
+  <div id="prompt" class="container rounded-3
+   p-2 w-100 bg-light py-4">
+    <div class="d-flex align-items-center gap-2" style="max-width: 15rem;">
+      <select id="model" class="form-control form-control-sm mb-2">
+        <option value="">Select a model</option>
+      </select>
+    </div>
+
+    <div>
+      <textarea class="text-area form-control mb-3" name="message" id="message"
+        placeholder="Type your message here..."></textarea>
+      <button id="submit" class="btn btn-outline-dark btn-sm rounded-3 m-1" type="submit">
+        <i class="fas fa-paper-plane"></i> Send
+      </button>
+    </div>
+
+  </div>
+
+
+  <script>
+
+    init()
+    // select the messages container
+    function init() {
+      const messages = document.getElementById('messages')
+
+      // select the button
+      const button = document.getElementById('submit')
+      // listen for the button click
+      button.addEventListener('click', function () {
+        // select the user message text 
+        const userMessage = {
+          role: 'user',
+
+          'content': document.getElementById('message').value
+        }
+
+        // model picker AI
+        const button = document.getElementById('submit');
+
+        const selectedModel = document.getElementById('model').value;
+        localStorage.setItem('selectedModel', selectedModel);
+
+
+        // contact AI
+        updateChat(userMessage)
+        renderWritingIndicator();
+        const data = prepareThePayload(userMessage);
+        sendAiRequest(data);
+
+      })
+    }
+
+    /***
+     * Update the chat with a new message
+     * @param {Object} message - The message object containing role and content
+     */
+    function updateChat(message) {
+      const { role, content } = message
+      const markup = `
+       <div class="message my-3 ${role == 'user' ? 'user' : 'assistant w-70 mx-auto'} card  p-2 align-self-${role == 'user' ? 'end' : 'start'}">${content}</div>
+      `
+      messages.insertAdjacentHTML("beforeend", markup)
+
+    }
+
+
+    /***
+     * Render a writing indicator
+     */
+    function renderWritingIndicator() {
+      const writingEl = document.createElement('div')
+      writingEl.innerText = 'Writing...'
+      writingEl.id = 'writing'
+      messages.insertAdjacentElement('beforeend', writingEl);
+    }
+
+
+
+    /***
+     * Prepare the payload for the AI request
+     * @param {Object} userMessage - The user message object
+     * @returns {string} - The JSON stringified payload
+     */
+    function prepareThePayload(userMessage) {
+      const selectedModel = localStorage.getItem('selectedModel') || 'gemma2:latest'
+      return JSON.stringify({
+        model: selectedModel,
+        stream: false,
+        messages: [
+          {
+            "role": "system",
+            "content": "You are an helpful assistant"
+          },
+          userMessage
+        ]
+      }, null, 2)
+    }
+
+
+    /***
+     * Send a request to the AI API
+     * @param {string} data - The JSON stringified payload
+     */
+    function sendAiRequest(data) {
+
+      fetch('http://127.0.0.1:11434/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: data,
+      }).then(res => res.json())
+        .then(data => {
+          console.log(data)
+          if (data.done) {
+            updateChat(data.message)
+          }
+
+        })
+        .catch(error => {
+          console.log(error)
+        })
+        .finally(() => {
+          document.getElementById('writing').remove()
+        })
+    }
+
+    // models picker AI
+    function getModels() {
+      fetch('http://127.0.0.1:11434/api/tags')
+        .then(res => res.json())
+        .then(data => {
+          const modelSelect = document.getElementById('model');
+          console.log(data)
+          data.models.forEach(model => {
+            const option = document.createElement('option');
+            option.value = model.model;
+            option.text = model.name;
+            if (localStorage.getItem('selectedModel') == model.model) {
+              option.selected = true
+            }
+            modelSelect.appendChild(option);
+          });
+        })
+        .catch(error => console.log(error));
+    }
+
+    getModels();
+
+  </script>
+
+</body>
+
+</html>
