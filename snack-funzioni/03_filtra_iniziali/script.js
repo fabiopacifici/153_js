@@ -2,7 +2,7 @@
 const names = ["Anna", "Luca", "Marco", "Adele", "Laura", "Alessandra"];
 
 // Dichiara la funzione qui.
-function filterNamesByInitial(names, initial){
+/* function filterNamesByInitial(names, initial) {
   // add variable to store the filtered names
   const filteredNames = []
 
@@ -15,7 +15,30 @@ function filterNamesByInitial(names, initial){
       // - push it inside the filtered names array
       filteredNames.push(name)
     }
-    
+
+  }
+
+
+  // return the filtered variable
+  //console.log(filteredNames);
+  return filteredNames
+} */
+
+
+const filterNamesByInitial = (names, initial) => {
+  // add variable to store the filtered names
+  const filteredNames = []
+
+  // loop over the array of names
+  for (let i = 0; i < names.length; i++) {
+    const name = names[i];
+    // IF check if the name starts with the initial character
+    //console.log(name.startsWith(initial))
+    if (name.startsWith(initial)) {
+      // - push it inside the filtered names array
+      filteredNames.push(name)
+    }
+
   }
 
 
@@ -23,6 +46,7 @@ function filterNamesByInitial(names, initial){
   //console.log(filteredNames);
   return filteredNames
 }
+
 
 // Invoca la funzione qui e stampa il risultato in console
 
