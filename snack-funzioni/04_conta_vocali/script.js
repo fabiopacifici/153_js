@@ -4,7 +4,7 @@ const word = 'javascript';
 
 
 // Dichiara la funzione qui.
-function countVowels(str){
+/* function countVowels(str){
   
   // store the counter for every vowel found
   let counter = 0
@@ -27,7 +27,7 @@ function countVowels(str){
   // return the counter
   return foundVowels.length
 
-}
+} */
 
 
 const countVowels = str => {
