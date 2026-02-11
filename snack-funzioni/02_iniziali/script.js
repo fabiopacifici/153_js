@@ -4,7 +4,7 @@ const names = ["Anna", "Luca", "Marco", "Adele", "Giovanni", "Alessandra"];
 
 
 // Dichiara la funzione qui.
-function getInitials(arr) {
+/* function getInitials(arr) {
   // create a variable to store the initials
   const initials = []
 
@@ -16,16 +16,38 @@ function getInitials(arr) {
     // from the first name gram the initial
     const initial = name.charAt(0)
     console.log(initial);
-  
+
     // push the character into the initials array
     initials.push(initial)
   }
 
   // return the initials array
   //console.log(initials);
-  
+
   return initials
 
+} */
+
+const getInitials = arr => {
+  const initials = []
+
+  // loop over the array of names
+  for (let i = 0; i < arr.length; i++) {
+    // grab the first name
+    const name = arr[i]
+    // for each name grab the first character
+    // from the first name gram the initial
+    const initial = name.charAt(0)
+    console.log(initial);
+
+    // push the character into the initials array
+    initials.push(initial)
+  }
+
+  // return the initials array
+  //console.log(initials);
+
+  return initials
 }
 
 // Invoca la funzione qui e stampa il risultato in console
