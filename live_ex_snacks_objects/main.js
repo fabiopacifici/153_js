@@ -132,7 +132,7 @@ console.log(teams);
 // 3. Infine, creiamo un nuovo array i cui elementi contengono solo nomi e falli subiti e stampiamo tutto in console.
 const newTeams = []
 const rowEl = document.querySelector('section .row')
-
+rowEl.classList.add()
 for (let i = 0; i < teams.length; i++) {
   const thisTeam = teams[i];
   const name = thisTeam.name
@@ -221,3 +221,32 @@ const movies = [
 
 const [matrixMovie, , starwarsMovie] = movies
 console.log(matrixMovie, starwarsMovie );
+
+
+// 📌 Spread operator 
+
+// with objects 
+const copyMovie = {...movie}
+console.log(copyMovie);
+
+// with arrays
+const copyMovies = [
+  ...movies
+]
+
+console.log(copyMovies);
+
+
+
+
+
+function createNodes(name, ...classes) {
+  console.log(name, classes);
+  const nodeEl = document.createElement(name)
+  nodeEl.classList.add(...classes)
+  
+  
+  console.log(nodeEl);
+}
+
+createNodes('button', 'btn', 'btn-primary')
