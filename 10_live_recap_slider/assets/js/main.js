@@ -63,6 +63,11 @@ let slides = [
     image: 'https://media.themoviedb.org/t/p/w500_and_h282_face/qruRhG6jE5M8lWnW1AGOBxtdmCO.jpg',
     title: 'Third Image',
     description: 'This is my first pic'
+  },
+  {
+    image: 'https://media.themoviedb.org/t/p/w500_and_h282_face/9zcbqSxdsRMZWHYtyCd1nXPr2xq.jpg',
+    title: 'First Image',
+    description: 'This is my first pic'
   }
 ]
 
@@ -97,23 +102,23 @@ console.log(nextEl, prevEl);
 
 function handleNext() {
 
-  console.log('You clicked next');
+  //console.log('You clicked next');
 
   // Increament the active slide index
   activeIndex++
 
-  console.log(activeIndex);
+  //console.log(activeIndex);
   
   if(activeIndex === slides.length) {
     // set active index to zero
-    console.log('Set the index back to zero');
+    //console.log('Set the index back to zero');
     activeIndex = 0
     
   }
-  console.log(activeIndex);
+  //console.log(activeIndex);
   
 
-  console.log(activeSlide, activeIndex, slides);
+  //console.log(activeSlide, activeIndex, slides);
   activeSlide = slides[activeIndex]
 
   renderActiveSlide(imageEl, activeSlide)
@@ -163,3 +168,63 @@ function handlePrev() {
 }
 
 prevEl.addEventListener('click', handlePrev)
+
+
+
+// 📌 Thumbnails
+//     <img width="140" src="https://media.themoviedb.org/t/p/w500_and_h282_face/9zcbqSxdsRMZWHYtyCd1nXPr2xq.jpg" alt="">
+
+
+
+// Select the DOM node for the thumns element (thumbs)
+const thumbsEl = document.querySelector('.thumbs')
+// Loop over the array of slides 
+// - for every slide we:
+for (let i = 0; i < slides.length; i++) {
+  const {image} = slides[i];
+  console.log(image);
+  // - create the markup element (⚠️ its a string)
+  const markup = ` <img width="140" src="${image}" alt="">`
+  console.log(markup);
+  // - append into the DOM inside the thums element 
+  //thumbsEl.insertAdjacentHTML('beforeend', markup)
+  thumbsEl.innerHTML = thumbsEl.innerHTML + markup
+}
+
+
+// Start the autoplay when the page loads
+
+let autoplayId = setInterval(handleNext, 3000)
+const containerEl = document.querySelector('.container')
+// when the user mouse enters the slide we stop the autoplay
+containerEl.addEventListener('mouseenter', function(){
+  //console.log('stop the autoplay');
+  clearInterval(autoplayId)
+  
+})
+// when the user mouse out the slide we restart the autoplay
+containerEl.addEventListener('mouseleave', function () {
+  //console.log('start the autoplay');
+
+  autoplayId = setInterval(handleNext, 3000)
+})
+
+
+// Select all thums on the page and attach an event llistener on each one. 
+// - when clicked it should log its index
+const thumbsNodeList = document.querySelectorAll('.thumbs img')
+console.log(thumbsNodeList);
+
+
+for (let i = 0; i < thumbsNodeList.length; i++) {
+  const element = thumbsNodeList[i];
+  console.log(element);
+  
+  element.addEventListener('click', function(){
+    console.log(i);
+    activeIndex = i
+    console.log(activeSlide);
+    activeSlide = slides[activeIndex]
+    renderActiveSlide(imageEl, activeSlide )
+  })
+}
